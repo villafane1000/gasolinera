@@ -43,7 +43,7 @@ Entregable opcional 8 del caso Flow (AndesFuel, caso ficticio). Una página web 
 
 ## Demo en vivo
 
-URL pública: _se agrega al desplegar en Vercel_
+URL pública: https://gasolinera-phi.vercel.app/
 
 ## Cómo correrlo
 
