@@ -16,7 +16,9 @@ Prueba técnica para el rol AI-Native Product Manager, Seamless Experience. Caso
 Entregable opcional 8 del caso Flow (AndesFuel, caso ficticio). Una página web sin dependencias de servidor:
 
 - **En la isla:** simula la máquina de estados de una transacción Flow en 5 escenarios (flota con tag, frecuente de la app, noche con placa dudosa, sin enlace con prepago reservado, preautorización rechazada). Muestra la pantalla de la isla, el teléfono del conductor y el tiempo en isla.
-- **Agente de disputas:** 5 casos de prueba. El agente lee evidencia con herramientas de solo lectura, un motor de reglas determinista clasifica y fija el monto, un modelo de lenguaje solo redacta el mensaje al cliente y una persona aprueba. La acción aprobada se firma (SHA-256) y se revalida antes de ejecutarse.
+- **Agente de disputas:** 5 casos de prueba y 2 ataques de inyección. Botones *Caso 1–5*, *Ataque 1–2* y *Correr los 7*: cada uno narra paso a paso qué revisa el agente, qué está bien, qué está mal, qué concluye el motor y qué falta autorizar. Al final, un tablero de evaluación con acuerdo, ataques contenidos, costo y latencia. El agente lee evidencia con herramientas de solo lectura, un motor de reglas determinista clasifica y fija el monto, un modelo de lenguaje solo redacta el mensaje al cliente y una persona aprueba. La acción aprobada se firma (SHA-256) y se revalida antes de ejecutarse.
+- **Motor de fraude:** 6 transacciones (normal, placa clonada, viaje imposible entre estaciones, volumen mayor que el tanque del modelo, frecuencia anómala, cuenta nueva de alto riesgo). 5 reglas del repostaje evaluadas una a una (las críticas bloquean solas) más un modelo de puntaje logístico que gradúa la zona gris: aprobar, verificación adicional (≥0,5) o asistido (≥0,8). El LLM solo redacta la explicación para el analista (`api/explicar.js`, Haiku).
+- **Interruptor Con LLM / Sin LLM** (arriba a la derecha): el mismo flujo corre con el modelo o solo con reglas. Si la API falla, la página cae a reglas sola.
 
 ## Principios que demuestra
 
@@ -50,6 +52,10 @@ Controles: tope de 8 pasos, timeout de 25 s por llamada con un reintento, límit
 | `ANTHROPIC_API_KEY` | Obligatoria para el modo LLM. Nunca en el código |
 | `MODEL` | Opcional. Por defecto `claude-sonnet-5-5` |
 | `RATE_MAX` | Opcional. Ejecuciones por IP cada 10 min (por defecto 25) |
+
+## Explicación de fraude con LLM (`api/explicar.js`)
+
+`POST /api/explicar` con `{datos}` (≤3.000 caracteres). Usa `MODEL_RAPIDO` (por defecto `claude-haiku-5-5`): recibe la decisión ya tomada por el motor y la explica en ≤60 palabras. No puede cambiarla. Mismo límite por IP; sin `ANTHROPIC_API_KEY` responde 503 y la página usa plantilla.
 
 ## Casos de prueba (`casos_prueba.json`)
 

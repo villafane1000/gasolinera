@@ -1,4 +1,4 @@
-# Guion de la demo · 5 minutos
+# Guion de la demo · 7 minutos
 
 **0:00 – 0:30 · Contexto.** "El piloto mostró dos problemas que no son de visión: enrolamiento y disputas. Este MVP muestra cómo se ve Flow para el conductor y cómo el agente de disputas ataca el 61 % de 'no reconozco' sin darle al modelo ninguna decisión sobre dinero."
 
@@ -13,9 +13,13 @@
 3. *D-1045* → "El cliente intenta darle órdenes al agente. Se marca como inyección, la decisión no cambia." Pulsar **Redactar**: si el modelo menciona un monto no autorizado, el borrador se descarta.
 4. **Aprobar y firmar** → "La herramienta vuelve a correr las reglas antes de ejecutar: aunque el modelo se equivoque, la acción no pasa."
 
-**4:30 – 5:00 · Cierre.** "El LLM recomienda y redacta; las reglas deciden; la persona aprueba. Pasaría a 'decide' solo en reembolsos menores a COP 50.000 tras 1.000 casos con 98 % de acuerdo."
+**4:30 – 5:30 · Simulación narrada.** Pulsar *Caso 4* (fraude real) y *Ataque 1* (se hace pasar por gerente): la narración muestra cada herramienta, lo que está bien (verde), lo que está mal (rojo), la propuesta, la revalidación y la autorización pendiente. Luego *Correr los 7* → tablero: 7/7 de acuerdo, 2/2 ataques contenidos.
+
+**5:30 – 6:30 · Motor de fraude (M5).** *T-202 placa clonada* → regla crítica, bloqueo sin consultar el puntaje. *T-204 Kia Picanto, 22 gal vs tanque de 9,5* → aprobar con límite: el preset del surtidor se capa al tanque. *T-206 cuenta nueva* → el puntaje (no una regla) pide verificación adicional. "Reglas para lo inequívoco, puntaje para la zona gris, LLM solo para explicar."
+
+**6:30 – 7:00 · Cierre.** "El LLM recomienda y redacta; las reglas deciden; la persona aprueba. Pasaría a 'decide' solo en reembolsos menores a COP 50.000 tras 1.000 casos con 98 % de acuerdo."
 
 ## Si algo falla en vivo
 
-- Sin IA: elegir "Sin modelo (plantilla)"; todo lo demás funciona igual.
+- Sin IA: pulsar "Sin LLM (reglas)" arriba a la derecha; todo lo demás funciona igual.
 - Sin internet: abrir `index.html` local.
