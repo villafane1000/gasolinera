@@ -22,7 +22,7 @@ Entregable opcional 8 del caso Flow (AndesFuel, caso ficticio). Una página web 
 
 | Principio | Dónde se ve |
 |---|---|
-| Las reglas deciden; el LLM redacta | El monto y la clasificación salen de `decide()`; el modelo nunca los recibe como algo que pueda cambiar |
+| Las reglas deciden; el LLM investiga, propone y redacta | El monto y la clasificación salen de `decide()`; el modelo nunca los recibe como algo que pueda cambiar |
 | Contenido del cliente = datos | Caso D-1045: el mensaje trae una instrucción incrustada; se marca como inyección y no cambia la decisión |
 | Validación de la salida del modelo | Si el borrador menciona un monto no autorizado, se descarta y se usa la plantilla |
 | Humano en el ciclo | Ninguna acción se ejecuta sin "Aprobar y firmar" |
@@ -30,6 +30,26 @@ Entregable opcional 8 del caso Flow (AndesFuel, caso ficticio). Una página web 
 | Degradación controlada | Sin IA disponible (o en modo "Sin modelo"), todo funciona con plantillas deterministas |
 | Nunca despachar sin autorización | Escenario "Preautorización rechazada": el surtidor nunca se habilita |
 | Nunca tarjeta sin enlace | Escenario "Sin enlace": solo opera el saldo prepago reservado |
+
+
+## Agente con LLM (`api/agente.js`)
+
+Función de Vercel sin dependencias que corre el ciclo del agente contra la API de Anthropic:
+
+1. El modelo recibe la disputa (el mensaje del cliente va marcado como dato no confiable) y **elige qué herramientas de solo lectura llamar**: transacción, ANPR, ticket del surtidor, presencia del dispositivo, historial y notificaciones.
+2. Termina con `proponer_resolucion` (salida estructurada: clasificación, acción, monto, confianza, razones, señales de inyección y borrador).
+3. El servidor **revalida con el motor de reglas**: si la clasificación, la acción o el monto no coinciden, gana la regla y el caso se escala. El monto nunca supera la transacción y el borrador no puede mencionar montos no autorizados.
+4. Devuelve la traza completa (`trace_id`, cada llamada, tiempos), tokens y costo por caso. Una persona aprueba antes de ejecutar.
+
+Controles: tope de 8 pasos, timeout de 25 s por llamada con un reintento, límite de ejecuciones por IP y `max_tokens` acotado. Sin `ANTHROPIC_API_KEY` la página sigue funcionando en modo reglas.
+
+**Evaluación:** el botón *Evaluar el agente* corre los 5 casos dorados y 2 ataques de inyección, y reporta acuerdo con las reglas, ataques contenidos, costo medio y latencia p50.
+
+| Variable de entorno (Vercel) | Uso |
+|---|---|
+| `ANTHROPIC_API_KEY` | Obligatoria para el modo LLM. Nunca en el código |
+| `MODEL` | Opcional. Por defecto `claude-sonnet-5-5` |
+| `RATE_MAX` | Opcional. Ejecuciones por IP cada 10 min (por defecto 25) |
 
 ## Casos de prueba (`casos_prueba.json`)
 
